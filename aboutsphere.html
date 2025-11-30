@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us – Sci-Fi Edition</title>
+
+    <style>
+        /* === Global Styles === */
+        body {
+            font-family: "Orbitron", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at center, #05050a, #000);
+            color: #00eaff;
+            overflow-x: hidden;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+        header {
+            text-align: center;
+            letter-spacing: 2px;
+            padding: 30px;
+            background: linear-gradient(to right, #00131f, #00334d);
+            border-bottom: 2px solid #00eaff;
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        h1, h2 {
+            text-shadow: 0 0 15px #00eaff;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 40px auto;
+            background: rgba(0, 15, 25, 0.75);
+            padding: 40px;
+            border: 2px solid #00eaff;
+            border-radius: 15px;
+            box-shadow: 0 0 20px #00eaff inset;
+            backdrop-filter: blur(5px);
+        }
+
+        /* === Glowing Divider === */
+        .divider {
+            height: 2px;
+            width: 100%;
+            background: linear-gradient(to right, transparent, #00eaff, transparent);
+            margin: 25px 0;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        /* === Team Section === */
+        .team-member {
+            background: rgba(0, 30, 40, 0.7);
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            border: 1px solid #00eaff;
+            box-shadow: 0 0 10px #00eaff inset;
+            transition: 0.3s;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px #00eaff;
+        }
+
+        .team-member h3 {
+            margin-top: 0;
+            text-shadow: 0 0 10px #00eaff;
+        }
+
+        /* === Buttons === */
+        button {
+            background: transparent;
+            border: 2px solid #00eaff;
+            color: #00eaff;
+            padding: 12px 22px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: "Orbitron", sans-serif;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            box-shadow: 0 0 10px #00eaff;
+        }
+
+        button:hover {
+            background: #00eaff;
+            color: #000;
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        /* === Animated Stars Background === */
+        .star {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: blink 2s infinite ease-in-out;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0.2; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>ABOUT US</h1>
+</header>
+
+<!-- Animated starfield created by JS -->
+<div id="starfield"></div>
+
+<div class="container">
+
+    <section id="company-info">
+        <h2>Our Mission</h2>
+        <p id="mission-text">
+           Our mission is to conduct advanced educational research focused on enhancing students’ understanding of Boyle’s Law and Charles’s Law. Through the development of interactive simulations, data-driven learning modules, and immersive visual experiences, we aim to convert traditionally abstract gas law concepts into clear, intuitive knowledge.
+
+By integrating modern technology with effective teaching strategies, our goal is to create alternative learning pathways that support various learning styles and help students build deeper scientific comprehension. This project serves as a platform to explore innovative methods of instruction while empowering learners to approach physics with confidence, curiosity, and real-world application in mind.
+
+        <div class="divider"></div>
+
+        <h2>Our Origin Story</h2>
+        <p id="story-text">
+            We are a team of dedicated researchers from the Bachelor of Secondary Education – Science, 3rd Year (Section 3A), committed to exploring innovative ways of improving science education. This action research project was born from our shared passion for helping students better understand essential concepts in physics—specifically Boyle’s Law and Charles’s Law.
+
+Recognizing the challenges many learners face when dealing with gas laws, we set out to create an accessible, interactive, and technology-enhanced resource that bridges the gap between theory and comprehension. This website was developed as part of our IIS (Innovative Instructional Strategy) requirement, serving as a digital platform where research, multimedia learning tools, and instructional materials come together.
+
+Our goal is not only to gather meaningful data for our study but also to contribute to the continuous improvement of science teaching practices. Through this project, we aim to inspire curiosity, support diverse learning needs, and demonstrate how modern educational strategies can elevate student understanding in the classroom.
+        </p>
+    </section>
+
+    <div class="divider"></div>
+
+    <section id="team-section">
+        <h2>Meet the Crew</h2>
+        <div id="team-container"></div>
+    </section>
+
+    <br>
+    <button onclick="goBack()">← Return to Home</button>
+</div>
+
+<script>
+// === Dynamic Team Placeholder Data ===
+const teamMembers = [
+    {
+        name: "Researcher/s",
+        role: "Eliese Marie Tiu and Kenneth Sotor ",
+        description: "We conducted this research to address the challenges students face in understanding Boyle’s Law and Charles’s Law. By exploring innovative instructional strategies, we aim to improve comprehension, support effective learning, and contribute to better science education practices.."
+    },
+    {
+        name: "The SphereAX Team",
+        role: "Feedbacks and Suggestions",
+        description: "For feedback, suggestions, and improvement ideas, feel free to reach out to us at SphereAX.chemistry@gmail.com Your insights help us enhance this platform and create better learning tools for students.For individuals or institutions interested in using, sharing, or adapting this website, please contact us through the same email to request permission. We appreciate your cooperation and support in maintaining the integrity of this project."
+    },
+    {
+        name: "Website Developer",
+        role: "FunWeb Website development Team by Lord Vincent Pacurib & Lord Titus Angelo Pacurib",
+        description: "For Inquiries message: funweb.physics@gmail.com "
+    },
+    
+];
+
+// Render team members
+function loadTeam() {
+    const container = document.getElementById("team-container");
+    teamMembers.forEach(member => {
+        const div = document.createElement("div");
+        div.classList.add("team-member");
+        div.innerHTML = `
+            <h3>${member.name}</h3>
+            <strong>${member.role}</strong>
+            <p>${member.description}</p>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// Back button handler
+function goBack() {
+    window.location.href = "index.html";
+}
+
+// === Starfield Generator ===
+function generateStars() {
+    const starfield = document.getElementById("starfield");
+    const numberOfStars = 120;
+
+    for (let i = 0; i < numberOfStars; i++) {
+        const star = document.createElement("div");
+        star.classList.add("star");
+
+        star.style.left = Math.random() * window.innerWidth + "px";
+        star.style.top = Math.random() * window.innerHeight + "px";
+        star.style.animationDelay = Math.random() * 2 + "s";
+        star.style.opacity = Math.random();
+
+        starfield.appendChild(star);
+    }
+}
+
+// Initialize everything
+loadTeam();
+generateStars();
+</script>
+
+</body>
+</html>

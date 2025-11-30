@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gas Laws Flipbook — Sphereax</title>
+  <meta name="description" content="Interactive Gas Laws flipbook (Boyle's & Charles' Law) — sci-fi aesthetic, animations, printable." />
+  <style>
+    /* --------------------
+       Sci‑Fi aesthetic variables
+       -------------------- */
+    :root{
+      --bg:#071124; /* deep space */
+      --panel:rgba(255,255,255,0.04);
+      --glass:rgba(255,255,255,0.06);
+      --accent:#3ee7c6; /* neon teal */
+      --accent-2:#6b8cff; /* neon blue */
+      --muted:#9fb2c8;
+      --glass-border:rgba(255,255,255,0.08);
+      --glass-shadow:0 6px 20px rgba(3,10,20,0.6);
+      --radius:14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+      --ui: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    /* Reset */
+    *{box-sizing:border-box}
+    html,body{height:100%; margin:0; font-family:var(--ui); background:radial-gradient(1200px 600px at 10% 10%, rgba(107,140,255,0.06), transparent), linear-gradient(180deg,#050819 0%, var(--bg) 60%); color:#dbeaf6}
+
+    /* Layout */
+    .app{display:grid; grid-template-columns:360px 1fr; gap:28px; padding:32px; min-height:100vh; align-items:start}
+
+    /* Sidebar */
+    .sidebar{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid var(--glass-border); border-radius:18px; padding:18px; box-shadow:var(--glass-shadow)}
+    .brand{display:flex; gap:12px; align-items:center}
+    .logo{width:56px; height:56px; border-radius:12px; display:grid; place-items:center; background:linear-gradient(135deg,var(--accent), var(--accent-2)); box-shadow:0 6px 20px rgba(107,140,255,0.12); font-weight:700}
+    .brand h1{font-size:16px;margin:0}
+    .brand p{margin:0;font-size:12px;color:var(--muted)}
+
+    .controls{margin-top:18px; display:flex; flex-direction:column; gap:12px}
+    .btn{background:transparent; border:1px solid rgba(255,255,255,0.06); padding:10px 12px; border-radius:10px; cursor:pointer; color:inherit; backdrop-filter: blur(6px); transition:all .22s}
+    .btn:hover{transform:translateY(-3px); box-shadow:0 8px 30px rgba(59,111,226,0.08)}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#021022; border:none; font-weight:600}
+
+    .pages-list{margin-top:14px; height:360px; overflow:auto; padding:8px; display:flex; flex-direction:column; gap:8px}
+    .page-item{display:flex; gap:10px; align-items:center; padding:10px; border-radius:10px; cursor:pointer; border:1px solid transparent}
+    .page-item:hover{background:rgba(255,255,255,0.02); border-color:rgba(255,255,255,0.03)}
+    .page-item.active{background:linear-gradient(90deg, rgba(62,231,198,0.06), rgba(107,140,255,0.04)); border:1px solid rgba(62,231,198,0.12)}
+    .page-index{width:36px; height:36px; border-radius:8px; display:grid; place-items:center; background:rgba(0,0,0,0.3); font-family:var(--mono); color:var(--accent)}
+
+    .meta{margin-top:12px; font-size:13px; color:var(--muted)}
+
+    /* Main viewer */
+    .viewer{display:flex; flex-direction:column; gap:16px}
+    .viewer-top{display:flex; justify-content:space-between; gap:12px}
+
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid var(--glass-border); border-radius:18px; padding:18px; box-shadow:var(--glass-shadow)}
+
+    .flipbook{height:640px; position:relative; overflow:hidden; display:grid; place-items:center}
+    .page{position:absolute; width:780px; max-width:calc(100% - 120px); height:540px; border-radius:16px; padding:28px; background:linear-gradient(135deg, rgba(255,255,255,0.017), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); transform-origin:left center; box-shadow:0 30px 80px rgba(2,6,12,0.6); backdrop-filter: blur(6px); display:flex; flex-direction:column; gap:12px}
+
+    /* page layering and animation */
+    .page[data-state="hidden"]{opacity:0; transform:translateX(40px) scale(0.98); pointer-events:none}
+    .page[data-state="current"]{z-index:30; transform:translateX(0) scale(1); opacity:1}
+    .page[data-state="next"]{z-index:10; transform:translateX(80px) scale(0.96); opacity:0.92}
+
+    /* flip animation */
+    .page.flip-left{animation:flipLeft .6s ease forwards}
+    .page.flip-right{animation:flipRight .6s ease forwards}
+    @keyframes flipLeft{
+      0%{transform:rotateY(0deg) translateX(0) scale(1); opacity:1}
+      60%{transform:rotateY(-90deg) translateX(-60px) scale(.98); opacity:.95}
+      100%{transform:rotateY(-100deg) translateX(-120px) scale(.96); opacity:0}
+    }
+    @keyframes flipRight{
+      0%{transform:rotateY(100deg) translateX(120px) scale(.96); opacity:0}
+      60%{transform:rotateY(40deg) translateX(20px) scale(.98); opacity:.95}
+      100%{transform:rotateY(0deg) translateX(0) scale(1); opacity:1}
+    }
+
+    /* header inside page */
+    .page h2{margin:0; font-size:20px; letter-spacing:0.2px}
+    .page .subtitle{color:var(--muted); font-size:13px}
+
+    /* content area */
+    .content{overflow:auto; padding-right:8px; font-size:15px; line-height:1.5}
+    .content ul{margin:8px 0 8px 18px}
+    .content table{width:100%; border-collapse:collapse}
+    .content table th, .content table td{padding:8px; text-align:left}
+
+    /* neon accents */
+    .glow-accent{color:var(--accent); text-shadow:0 6px 30px rgba(62,231,198,0.14)}
+
+    /* footer controls */
+    .controls-row{display:flex; gap:10px; align-items:center}
+    .small{font-size:13px; color:var(--muted)}
+    .progress{height:10px; background:rgba(255,255,255,0.03); border-radius:10px; overflow:hidden; width:220px}
+    .progress > i{display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-2)); width:0%}
+
+    /* keyboard hint */
+    .hint{font-size:12px; color:var(--muted)}
+
+    /* responsive */
+    @media (max-width:980px){
+      .app{grid-template-columns:1fr; padding:18px}
+      .sidebar{order:2}
+      .viewer{order:1}
+      .flipbook{height:540px}
+    }
+
+    /* print styles */
+    @media print{
+      body{background:white; color:black}
+      .sidebar, .controls-row, .btn{display:none}
+      .page{position:static; box-shadow:none; border:none; transform:none; width:100%; height:auto}
+    }
+
+    /* subtle animated background stars */
+    .stars{position:fixed; left:0; top:0; right:0; bottom:0; pointer-events:none; z-index:0}
+    .stars:after{content:''; position:absolute; width:2px; height:2px; box-shadow:
+      40px 60px #123456, 80px 120px #234567, 200px 90px #345678, 580px 250px #56789a, 420px 20px #89abcd,
+      700px 400px #cdefff, 920px 120px #89abcd, 100px 500px #67bcd9, 300px 300px #68d0be;
+      animation:twinkle 6s linear infinite; opacity:0.6}
+    @keyframes twinkle{50%{opacity:0.2} 100%{opacity:0.6}}
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+  <div class="app">
+    <aside class="sidebar card" aria-label="Sidebar">
+      <div class="brand">
+        <div class="logo">Sx</div>
+        <div>
+          <h1>Sphereax</h1>
+          <p>Gas Laws Flipbook — Boyle & Charles</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div style="display:flex; gap:8px;">
+          <button class="btn primary" id="prevBtn" title="Previous (ArrowLeft)">◀ Prev</button>
+          <button class="btn primary" id="nextBtn" title="Next (ArrowRight)">Next ▶</button>
+        </div>
+
+        <div style="display:flex; gap:8px;">
+          <button class="btn" id="playPauseBtn" title="Play/Pause (Space)">Play</button>
+          <button class="btn" id="printBtn" title="Print">Print</button>
+          <button class="btn" id="exportBtn" title="Export to HTML file">Export</button>
+        </div>
+
+        <div class="meta small">Keyboard: ← previous · → next · Space play/pause · P print</div>
+
+        <div class="pages-list" id="pagesList" role="list"></div>
+
+        <div style="margin-top:8px; display:flex; justify-content:space-between; align-items:center">
+          <div class="small">Progress</div>
+          <div class="progress" aria-hidden><i id="progressBar"></i></div>
+        </div>
+
+      </div>
+    </aside>
+
+    <main class="viewer">
+      <div class="viewer-top">
+        <div class="card" style="flex:1">
+          <div style="display:flex; align-items:center; justify-content:space-between">
+            <div>
+              <div class="small">Interactive Flipbook</div>
+              <h3 style="margin:2px 0 0">Gas Laws — Boyle & Charles</h3>
+              <div class="subtitle small"></div>
+            </div>
+            <div style="text-align:right;">
+              <div class="small">Page <span id="currentIndex">1</span> / <span id="totalPages">0</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="width:260px">
+          <div class="card" style="display:flex; gap:8px; align-items:center; justify-content:space-between">
+            <div style="flex:1">
+              <div class="small">Theme</div>
+              <div style="display:flex; gap:8px; margin-top:6px">
+                <button class="btn" id="themeToggle">Toggle Glow</button>
+                <button class="btn" id="contrastToggle">High Contrast</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="flipbook card" id="flipbook" role="region" aria-label="Flipbook viewer">
+        <!-- pages will be injected here -->
+      </section>
+
+      <div style="display:flex; justify-content:space-between; align-items:center">
+        <div class="controls-row">
+          <button class="btn" id="firstBtn" title="First Page">|&lt;</button>
+          <button class="btn" id="prevSmallBtn" title="Previous">◀</button>
+          <button class="btn primary" id="nextSmallBtn" title="Next">▶</button>
+          <button class="btn" id="lastBtn" title="Last Page">&gt;|</button>
+
+          <div style="width:12px"></div>
+          <div class="hint small">Tip: Click a page title to jump to it.</div>
+        </div>
+
+        <div class="small">Made for students • Sphereax ©</div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    /* --------------------
+       Pages content (improved & expanded)
+       Keep HTML strings small and safe
+       --------------------*/
+    const pages = [
+      {
+        title: "Cover Page",
+        body: `
+          <div style="display:flex; gap:18px; align-items:center">
+            <div style="flex:1">
+              <h2 style="margin:0; font-size:28px">Gas Laws Flipbook</h2>
+              <p style="margin:6px 0 0; color:var(--muted)">A visual, interactive guide to Boyle's Law & Charles' Law</p>
+              <p style="margin-top:18px; color:var(--muted);">Designed for Grade 7–10 • Created by <strong>Sphereax</strong></p>
+            </div>
+            <div style="width:160px; text-align:center">
+              <svg width="120" height="120" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <rect x="1" y="1" width="22" height="22" rx="4" stroke="rgba(255,255,255,0.06)"/>
+                <circle cx="12" cy="9" r="3" stroke="currentColor" stroke-width="0.8" fill="rgba(62,231,198,0.06)"/>
+                <rect x="6" y="15" width="12" height="3" rx="1.2" fill="rgba(107,140,255,0.06)"/>
+              </svg>
+              <div style="margin-top:6px; font-size:13px; color:var(--muted)">Flip to explore →</div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Introduction",
+        body: `
+          <p><strong>Gas laws</strong> describe how gases respond when pressure, temperature, or volume changes. This flipbook focuses on two key laws used in everyday life and science:</p>
+          <ul>
+            <li><strong>Boyle's Law:</strong> pressure vs volume (inverse)</li>
+            <li><strong>Charles' Law:</strong> temperature vs volume (direct)</li>
+          </ul>
+          <p style="color:var(--muted)">You will learn definitions, see diagrams, and solve examples — all with helpful hints and animations to make the ideas stick.</p>
+        `
+      },
+      {
+        title: "What is Boyle’s Law?",
+        body: `
+          <p><strong>Boyle's Law</strong> (constant temperature):</p>
+          <p style="text-align:center; font-size:20px"><strong>P₁V₁ = P₂V₂</strong></p>
+          <p>Pressure and volume are <strong>inversely proportional</strong>. If one goes up, the other goes down.</p>
+          <div style="display:flex; gap:12px; margin-top:8px">
+            <div style="flex:1">
+              <p><strong>Everyday example:</strong></p>
+              <p>Squeezing a balloon makes the inside volume smaller because the gas is compressed — pressure rises.</p>
+            </div>
+            <div style="width:140px; font-family:var(--mono); color:var(--accent); background:rgba(62,231,198,0.02); padding:8px; border-radius:8px">
+              P ∝ 1/V
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Boyle’s Law Example",
+        body: `
+          <p><strong>Problem:</strong></p>
+          <p>A gas has P₁ = 2 atm and V₁ = 3 L. If pressure changes to P₂ = 3 atm, what is V₂?</p>
+
+          <p><strong>Work:</strong></p>
+          <pre style="background:rgba(255,255,255,0.02); padding:8px; border-radius:8px">P₁V₁ = P₂V₂
+2 × 3 = 3 × V₂
+6 = 3V₂
+V₂ = 2 L</pre>
+
+          <p><em>Note:</em> The faster way is to notice the pressure increased by a factor 3/2 → the volume decreases by the inverse factor 2/3.</p>
+        `
+      },
+      {
+        title: "Real-Life Boyle’s Law",
+        body: `
+          <ul>
+            <li><strong>Syringe:</strong> Pull plunger → volume ↑ → pressure ↓ → liquid or air flows in.</li>
+            <li><strong>Breathing:</strong> Chest expands → lung volume ↑ → air flows in.</li>
+            <li><strong>Soda can:</strong> Condensed CO₂ stored under pressure; opening reduces pressure → bubbles form.</li>
+          </ul>
+          <p class="small" style="color:var(--muted)">Boyle's law is especially useful in engineering, medicine, and weather instruments.</p>
+        `
+      },
+      {
+        title: "What is Charles’ Law?",
+        body: `
+          <p><strong>Charles' Law</strong> (constant pressure):</p>
+          <p style="text-align:center; font-size:20px"><strong>V₁/T₁ = V₂/T₂</strong></p>
+          <p>Volume and temperature are <strong>directly proportional</strong>. Temperature must be in Kelvin (K).</p>
+          <p style="color:var(--muted)"><strong>Conversion:</strong> K = °C + 273</p>
+        `
+      },
+      {
+        title: "Charles’ Law Example",
+        body: `
+          <p><strong>Problem:</strong> A 2.0 L balloon at 27°C is heated to 77°C. What is the new volume?</p>
+          <p><strong>Solution:</strong></p>
+          <pre style="background:rgba(255,255,255,0.02); padding:8px; border-radius:8px">T₁ = 27 + 273 = 300 K
+T₂ = 77 + 273 = 350 K
+V₁ / T₁ = V₂ / T₂
+2.0 / 300 = V₂ / 350
+V₂ = 2.0 × 350 / 300 = 2.33 L</pre>
+          <p style="color:var(--muted)">Heating increases kinetic energy of molecules so they push outward and the volume grows.</p>
+        `
+      },
+      {
+        title: "Real-Life Charles’ Law",
+        body: `
+          <ul>
+            <li><strong>Hot air balloons:</strong> heated air expands and becomes less dense — balloon rises.</li>
+            <li><strong>Car tires:</strong> temperature drops lead to lower pressure (and volume change in flexible tires).</li>
+            <li><strong>Balloons in cold rooms:</strong> shrink a bit because gas contracts.</li>
+          </ul>
+        `
+      },
+      {
+        title: "Key Differences",
+        body: `
+          <table style="width:100%; border-collapse:collapse;">
+            <tr><th style="padding:8px; background:rgba(255,255,255,0.02)">Boyle's Law</th><th style="padding:8px; background:rgba(255,255,255,0.02)">Charles' Law</th></tr>
+            <tr><td style="padding:8px">P ↔ V (inverse)</td><td style="padding:8px">T ↔ V (direct)</td></tr>
+            <tr><td style="padding:8px">Temp constant</td><td style="padding:8px">Pressure constant</td></tr>
+          </table>
+          <p style="margin-top:8px; color:var(--muted)">Use the right law depending on which quantity is held constant.</p>
+        `
+      },
+      {
+        title: "Practice Challenge",
+        body: `
+          <p><strong>Try this:</strong></p>
+          <p>1) A gas at 4.0 L and 1.2 atm is compressed to 0.8 atm. Find the new volume.</p>
+          <p>2) A balloon at 20°C with 1.5 L volume is warmed to 50°C. Find new volume.</p>
+
+          <p style="color:var(--muted)"><em>Answers on the next page (try first without looking!)</em></p>
+        `
+      },
+      {
+        title: "Practice Answers",
+        body: `
+          <p>1) Boyle's Law: P₁V₁ = P₂V₂ → 1.2 × 4.0 = 0.8 × V₂ → 4.8 = 0.8V₂ → V₂ = 6.0 L</p>
+          <p>2) Charles' Law: T₁ = 20+273=293 K, T₂ = 50+273=323 K → V₂ = V₁ × T₂/T₁ = 1.5 × 323/293 ≈ 1.65 L</p>
+          <p style="color:var(--muted)"><em>Well done! Practicing is the fastest way to remember these laws.</em></p>
+        `
+      },
+      {
+        title: "Back Page",
+        body: `
+          <h3 style="margin:0">You've finished!</h3>
+          <p style="color:var(--muted)">Keep this flipbook for quick review. Use the print button to create a printable study sheet.</p>
+          <p style="margin-top:10px; font-size:13px">Created by <strong>Sphereax</strong> • Learning made visual.</p>
+        `
+      }
+    ];
+
+    /* --------------------
+       Flipbook engine
+       -------------------- */
+    const flipbook = document.getElementById('flipbook');
+    const pagesList = document.getElementById('pagesList');
+    const currentIndexEl = document.getElementById('currentIndex');
+    const totalPagesEl = document.getElementById('totalPages');
+    const progressBar = document.getElementById('progressBar');
+
+    let current = 0;
+    let playing = false;
+    let autoplayTimer = null;
+
+    function build(){
+      flipbook.innerHTML = '';
+      pagesList.innerHTML = '';
+      pages.forEach((p, i) => {
+        const pg = document.createElement('article');
+        pg.className = 'page';
+        pg.setAttribute('data-index', i);
+        pg.setAttribute('role','article');
+        pg.setAttribute('aria-label', p.title);
+        pg.innerHTML = `
+          <h2 class="glow-accent">${p.title}</h2>
+          <div class="subtitle small">Sphereax • ${i+1}</div>
+          <div class="content">${p.body}</div>
+        `;
+        flipbook.appendChild(pg);
+
+        const item = document.createElement('button');
+        item.className = 'page-item';
+        item.innerHTML = `<div class="page-index">${i+1}</div><div style="flex:1; text-align:left">${p.title}</div>`;
+        item.addEventListener('click', () => goTo(i));
+        pagesList.appendChild(item);
+      });
+
+      totalPagesEl.innerText = pages.length;
+      update();
+    }
+
+    function update(){
+      const all = flipbook.querySelectorAll('.page');
+      all.forEach((el, idx) => {
+        el.classList.remove('flip-left','flip-right');
+        if(idx < current - 1) {
+          el.dataset.state = 'hidden';
+        } else if(idx === current){
+          el.dataset.state = 'current';
+        } else if(idx === current + 1){
+          el.dataset.state = 'next';
+        } else {
+          el.dataset.state = 'hidden';
+        }
+      });
+
+      // active list
+      pagesList.querySelectorAll('.page-item').forEach((node, i) => node.classList.toggle('active', i === current));
+      currentIndexEl.innerText = current + 1;
+
+      // progress
+      const pct = Math.round(((current+1)/pages.length) * 100);
+      progressBar.style.width = pct + '%';
+    }
+
+    function goTo(i){
+      i = Math.max(0, Math.min(pages.length - 1, i));
+      const dir = i > current ? 'right' : 'left';
+      if(i === current) return;
+
+      // animate pages
+      const from = flipbook.querySelector(`.page[data-index="${current}"]`);
+      const to = flipbook.querySelector(`.page[data-index="${i}"]`);
+      if(dir === 'right'){
+        from.classList.add('flip-left');
+        to.classList.add('flip-right');
+      } else {
+        from.classList.add('flip-right');
+        to.classList.add('flip-left');
+      }
+
+      current = i;
+      setTimeout(update, 180);
+    }
+
+    // Navigation helpers
+    document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+    document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+    document.getElementById('prevSmallBtn').addEventListener('click', () => goTo(current - 1));
+    document.getElementById('nextSmallBtn').addEventListener('click', () => goTo(current + 1));
+    document.getElementById('firstBtn').addEventListener('click', () => goTo(0));
+    document.getElementById('lastBtn').addEventListener('click', () => goTo(pages.length - 1));
+
+    // Play/Pause auto flip
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    playPauseBtn.addEventListener('click', togglePlay);
+
+    function togglePlay(){
+      playing = !playing;
+      playPauseBtn.innerText = playing ? 'Pause' : 'Play';
+      if(playing){
+        autoplayTimer = setInterval(() => {
+          if(current < pages.length - 1) goTo(current + 1);
+          else { goTo(0); }
+        }, 2600);
+      } else {
+        clearInterval(autoplayTimer);
+      }
+    }
+
+    // Keyboard controls
+    window.addEventListener('keydown', (e) => {
+      if(e.code === 'ArrowRight') goTo(current + 1);
+      if(e.code === 'ArrowLeft') goTo(current - 1);
+      if(e.code === 'Space') { e.preventDefault(); togglePlay(); }
+      if(e.key.toLowerCase() === 'p') window.print();
+    });
+
+    // Print
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+    // Export — generate HTML file with the current state
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      const doc = `<!doctype html><html><head><meta charset=\"utf-8\"><title>Gas Laws Flipbook - Export</title><style>body{font-family:Arial; padding:20px}</style></head><body>${pages.map(p=>`<h2>${p.title}</h2>${p.body}`).join('<hr/>')}</body></html>`;
+      const blob = new Blob([doc], {type: 'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'gas-laws-flipbook.html';
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    // Theme toggles
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      document.body.classList.toggle('no-glow');
+      document.querySelectorAll('.glow-accent').forEach(n => n.style.textShadow = document.body.classList.contains('no-glow') ? 'none' : '0 8px 40px rgba(62,231,198,0.12)');
+    });
+    document.getElementById('contrastToggle').addEventListener('click', () => {
+      document.body.classList.toggle('high-contrast');
+      if(document.body.classList.contains('high-contrast')){
+        document.documentElement.style.setProperty('--bg','#02030a');
+        document.documentElement.style.setProperty('--muted','#bcd4ea');
+      } else {
+        document.documentElement.style.setProperty('--bg','#071124');
+        document.documentElement.style.setProperty('--muted','#9fb2c8');
+      }
+    });
+
+    // accessibility: focus outline
+    document.body.addEventListener('keyup', ()=> document.body.classList.add('keyboard'));
+
+    // Initialize
+    build();
+
+    // small entrance animation
+    requestAnimationFrame(()=>{
+      document.querySelectorAll('.page').forEach((el, i)=>{
+        el.style.transition = 'transform .6s cubic-bezier(.2,.9,.3,1), opacity .5s linear';
+        el.style.transform = 'translateY(8px)';
+        setTimeout(()=> el.style.transform = '', 40 + i*40);
+      });
+    });
+
+    // start on cover
+    goTo(0);
+
+    /* --------------------
+       Extra: make sure large text content scrolls gracefully
+       -------------------- */
+    document.addEventListener('click', (e) => {
+      // close any potential future popups
+    });
+    
+    
+  </script>
+</body>
+</html>
+<!-- Sci-Fi Back to Index Button -->
+<button id="backToIndex"
+  style="
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 10px 18px;
+    background: rgba(0, 200, 255, 0.15);
+    color: #00eaff;
+    border: 1px solid #00eaff;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 0 12px #00eaff, inset 0 0 8px #00eaff;
+    text-shadow: 0 0 6px #00eaff;
+    transition: 0.3s ease;
+    animation: floatPulse 2.5s infinite ease-in-out;
+  ">
+  ⬅ Back
+</button>
+
+<style>
+@keyframes floatPulse {
+  0% { transform: translateY(0); box-shadow: 0 0 12px #00eaff; }
+  50% { transform: translateY(-6px); box-shadow: 0 0 20px #00eaff; }
+  100% { transform: translateY(0); box-shadow: 0 0 12px #00eaff; }
+}
+#backToIndex:hover {
+  background: rgba(0, 200, 255, 0.35);
+  transform: scale(1.08);
+  box-shadow: 0 0 25px #00eaff, inset 0 0 12px #00eaff;
+}
+</style>
+
+<script>
+document.getElementById("backToIndex").onclick = () => {
+  window.location.href = "index.html";
+};
+</script>
+
+

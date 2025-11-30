@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sphereax — Intro</title>
+  <meta name="description" content="Sphereax — A sleek intro landing with four directional panels." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%230078FF'/%3E%3C/svg%3E" />
+  <style>
+    /* ---------------------------------------------------------------
+       Sphereax Intro — Single-file HTML + CSS + JS
+       - 4 rectangular sections (cards) that link to other pages
+       - aesthetic, responsive, accessible
+       - interactive hover / focus states and small animations
+       --------------------------------------------------------------- */
+
+    :root{
+      --bg:#0b1020;
+      --card-bg:linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      --glass: rgba(255,255,255,0.04);
+      --accent-1: #7CE7D7; /* mint */
+      --accent-2: #8AA2FF; /* periwinkle */
+      --accent-3: #FFC47E; /* warm */
+      --accent-4: #FF7B9C; /* coral */
+      --muted:#98A0B3;
+      --radius:16px;
+      --maxw:1200px;
+      --shadow: 0 10px 30px rgba(2,6,23,0.6);
+      --glass-border: 1px solid rgba(255,255,255,0.04);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(120,138,255,0.07), transparent),
+                  radial-gradient(800px 400px at 90% 90%, rgba(255,123,156,0.04), transparent),
+                  var(--bg);
+      color: #e7eefc;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Page container */
+    .page{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:48px 24px;
+      box-sizing:border-box;
+    }
+
+    .wrap{
+      width:100%;
+      max-width:var(--maxw);
+      margin:0 auto;
+      display:grid;
+      grid-template-columns: 1fr 460px;
+      gap:34px;
+      align-items:stretch;
+      position:relative;
+    }
+
+    /* Left: big intro + cards grid */
+    .left{
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      min-height:520px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .logo{
+    width: 92px;
+    height: 92px;
+    border-radius: 24px;
+
+    /* Multi-layer conic gradient for galaxy-like swirl */
+    background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25), transparent 60%),
+        conic-gradient(from 180deg at 50% 50%,
+            var(--accent-1),
+            var(--accent-2),
+            var(--accent-3),
+            var(--accent-4),
+            var(--accent-1)
+        );
+
+    /* Deep glossy + holographic look */
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.6),             /* outer depth */
+        0 0 25px rgba(0,195,255,0.35),           /* neon aura */
+        inset 0 0 18px rgba(255,255,255,0.12),   /* inner glow */
+        inset 0 -12px 22px rgba(0,0,0,0.45),     /* shading */
+        inset 0 8px 18px rgba(255,255,255,0.08); /* glossy top */
+
+    display: grid;
+    place-items: center;
+    color: #04131a;
+
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: 1px;
+    text-shadow:
+        0 0 6px rgba(255,255,255,0.6),
+        0 0 12px rgba(0,180,255,0.75);
+
+    border: 2px solid rgba(255,255,255,0.15);
+    position: relative;
+    overflow: hidden;
+
+    /* subtle floating animation */
+    animation: floatLogo 4s ease-in-out infinite;
+}
+
+/* Animated rotating light ring */
+.logo::before{
+    content: "";
+    position: absolute;
+    width: 140%;
+    height: 140%;
+    border-radius: 50%;
+    background: conic-gradient(
+        rgba(255,255,255,0.0) 0deg,
+        rgba(0,200,255,0.55) 90deg,
+        rgba(0,120,255,0.75) 180deg,
+        rgba(255,255,255,0.0) 360deg
+    );
+    filter: blur(18px);
+    animation: spinGlow 6s linear infinite;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Crystal flare highlight */
+.logo::after{
+    content: "";
+    position: absolute;
+    top: -30%;
+    left: -30%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25), transparent 50%);
+    transform: rotate(25deg);
+    mix-blend-mode: screen;
+    pointer-events: none;
+}
+
+/* Animations */
+@keyframes floatLogo {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-6px) scale(1.03); }
+}
+
+@keyframes spinGlow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+    
+
+    .title{
+      font-size:30px;
+      line-height:1.05;
+      margin:0;
+      font-weight:700;
+      letter-spacing:-0.02em;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      margin-top:6px;
+      font-size:14px;
+    }
+
+    /* Cards grid */
+    .grid{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: repeat(2,1fr);
+      gap:18px;
+      align-items:stretch;
+      flex:1 1 auto;
+      min-height:360px;
+    }
+
+    /* Each rectangle card */
+    .card{
+      position:relative;
+      overflow:hidden;
+      border-radius:var(--radius);
+      background:var(--card-bg);
+      border:var(--glass-border);
+      padding:20px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      justify-content:flex-end;
+      min-height:140px;
+      box-shadow: var(--shadow);
+      transition: transform 420ms cubic-bezier(.2,.9,.25,1), box-shadow 320ms ease, background 320ms ease;
+      cursor:pointer;
+      text-decoration:none;
+      color:inherit;
+    }
+
+    .card:focus{ outline: 3px solid rgba(138,162,255,0.16); outline-offset:6px; }
+
+    .card:hover{
+      transform: translateY(-8px) scale(1.01);
+      box-shadow: 0 22px 60px rgba(2,6,23,0.7);
+    }
+
+    .card .eyebrow{
+      font-size:13px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:0.14em;
+      font-weight:700;
+    }
+
+    .card h3{
+      margin:0;font-size:18px;line-height:1.06;font-weight:700;
+    }
+
+    .card p{ margin:0;color:var(--muted);font-size:13px; }
+
+    /* Decorative orb shapes inside cards */
+    .orb{
+      position:absolute;
+      right:-40px;
+      top:-40px;
+      width:220px;height:220px;
+      filter: blur(30px);
+      opacity:0.22;
+      transform: rotate(18deg);
+      pointer-events:none;
+    }
+
+    /* Unique accents for each card */
+    .card.accent-1{ background: linear-gradient(135deg, rgba(124,231,215,0.06), rgba(138,162,255,0.02)); }
+    .card.accent-2{ background: linear-gradient(135deg, rgba(138,162,255,0.06), rgba(255,196,126,0.02)); }
+    .card.accent-3{ background: linear-gradient(135deg, rgba(255,196,126,0.06), rgba(255,123,156,0.02)); }
+    .card.accent-4{ background: linear-gradient(135deg, rgba(255,123,156,0.06), rgba(124,231,215,0.02)); }
+
+    .card .meta{
+      display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);
+    }
+
+    .card .meta span.dot{
+      display:inline-block;width:10px;height:10px;border-radius:50%;background:linear-gradient(180deg,#fff,rgba(255,255,255,0.7));opacity:0.9;mix-blend-mode:overlay;
+    }
+
+    /* Right column: info panel */
+    .right{
+      align-self:stretch;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:18px;
+      padding:22px;
+      border:var(--glass-border);
+      min-height:520px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      box-shadow: var(--shadow);
+    }
+
+    .right h4{ margin:0;font-size:16px; }
+    .right p{ margin:0;color:var(--muted);font-size:14px; }
+
+    .links{
+      margin-top:12px;display:flex;flex-direction:column;gap:10px;
+    }
+
+    .btn{
+      display:inline-flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;border:none;background:transparent;cursor:pointer;
+      font-weight:700;color:var(--muted);text-decoration:none;border:1px solid rgba(255,255,255,0.04);
+      transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+    }
+    .btn:focus{ outline:3px solid rgba(124,231,215,0.12); }
+    .btn:hover{ transform: translateY(-4px); color:var(--accent-2); }
+
+    .footer-note{ margin-top:auto;color:var(--muted);font-size:12px }
+
+    /* Responsive adjustments */
+    @media (max-width:980px){
+      .wrap{ grid-template-columns: 1fr; }
+      .right{ order: -1; }
+      .grid{ grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width:520px){
+      .grid{ grid-template-columns: 1fr; }
+      .brand{ gap:10px }
+      .logo{ width:56px;height:56px }
+      .title{ font-size:24px }
+    }
+
+    /* small accessible hidden class for screen readers */
+    .sr-only{ position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap;border:0;padding:0;margin:-1px }
+
+  </style>
+</head>
+<body>
+  <main class="page" id="main">
+    <div class="wrap" role="main">
+
+      <section class="left" aria-labelledby="sphereax-heading">
+        <div class="brand">
+          <div class="logo" aria-hidden="true">S</div>
+          <div>
+            <h1 id="sphereax-heading" class="title">Sphereax</h1>
+            <div class="subtitle">Learn Gas Laws by Flipping, Exploring, and Experimenting</div>
+          </div>
+        </div>
+
+        <div class="grid" id="cardGrid">
+
+          <!-- Card 1 -->
+          <a href="elib.html" data-target="http://127.0.0.1:3000/Project/sphereax/elib.html?serverWindowId=7a71e89e-e59a-413c-91a1-11a119084ea8" class="card accent-1" role="link" tabindex="0" aria-label="Go to Alpha">
+            <div class="orb" style="background:radial-gradient(circle at 30% 30%, rgba(124,231,215,0.55), transparent 30%), radial-gradient(circle at 70% 70%, rgba(138,162,255,0.35), transparent 30%);"></div>
+            <div>
+              <div class="eyebrow">read</div>
+              <h3>FlipBook</h3>
+              <p>Explore concise, easy to-understand science lessons in an interactive flipbook format. 
+  The SPHERE Flipbook presents concepts with clarity, visuals, and smooth page transitions making learning more engaging and enjoyable.
+</p></p>
+            </div>
+            <div class="meta" aria-hidden="true"><span class="dot"></span><span></span></div>
+          </a>
+
+          <!-- Card 2 -->
+          <a href="http://127.0.0.1:3000/Project/sphereax/solve.html?serverWindowId=aae3f263-fafc-4842-b3c3-d213e04fe597" data-target="http://127.0.0.1:3000/Project/sphereax/solve.html?serverWindowId=aae3f263-fafc-4842-b3c3-d213e04fe597" class="card accent-2" role="link" tabindex="0" aria-label="Go to Bravo">
+            <div class="orb" style="background:radial-gradient(circle at 20% 20%, rgba(138,162,255,0.55), transparent 30%), radial-gradient(circle at 80% 80%, rgba(255,196,126,0.35), transparent 30%);"></div>
+            <div>
+              <div class="eyebrow">SOlve!</div>
+              <h3>Solve and Practice</h3>
+              <p>Find a place in your home where you can relax and concentrate. Seperate it from your relaxing area ideally without any televisions or other distractions.</p>
+            </div>
+            <div class="meta" aria-hidden="true"><span class="dot"></span><span></span></div>
+          </a>
+
+          <!-- Card 3 -->
+          <a href="#" data-target="http://127.0.0.1:3000/Project/sphereax/sims.html?serverWindowId=ca42473f-90ca-45b3-aae5-42699b6f08ee" class="card accent-3" role="link" tabindex="0" aria-label="Go to Charlie">
+            <div class="orb" style="background:radial-gradient(circle at 10% 60%, rgba(255,196,126,0.60), transparent 30%), radial-gradient(circle at 80% 20%, rgba(255,123,156,0.28), transparent 30%);"></div>
+            <div>
+              <div class="eyebrow">Simulations</div>
+              <h3>DigiLab</h3>
+              <p>DigiLab is an interactive virtual environment where students can explore scientific concepts through simulations, digital experiments, and hands-on visualization tools. It transforms abstract ideas into dynamic, observable experiences, empowering learners to experiment, predict outcomes, and deepen their scientific reasoning..</p>
+            </div>
+            <div class="meta" aria-hidden="true"><span class="dot"></span><span></span></div>
+          </a>
+
+          <!-- Card 4 -->
+          <a href="http://127.0.0.1:3000/Project/sphereax/aboutsphere.html?serverWindowId=aae3f263-fafc-4842-b3c3-d213e04fe597" data-target="http://127.0.0.1:3000/Project/sphereax/aboutsphere.html?serverWindowId=aae3f263-fafc-4842-b3c3-d213e04fe597" class="card accent-4" role="link" tabindex="0" aria-label="Go to Delta">
+            <div class="orb" style="background:radial-gradient(circle at 40% 40%, rgba(255,123,156,0.60), transparent 30%), radial-gradient(circle at 70% 70%, rgba(124,231,215,0.28), transparent 30%);"></div>
+            <div>
+              <div class="eyebrow">contact us</div>
+              <h3>About SphereAX</h3>
+              <p></p>
+            </div>
+            <div class="meta" aria-hidden="true"><span class="dot"></span><span></span></div>
+          </a>
+
+        </div>
+
+        <p class="sr-only" id="intro-desc">Sphereax landing page. Four rectangular panels lead to other sections: Alpha, Bravo, Charlie, Delta.</p>
+      </section>
+
+      <aside class="right" aria-labelledby="info-title">
+        <div>
+       
+          <p><style>
+  #info-title {
+    margin-bottom: 15px; /* Space below the heading */
+  }
+
+  #info-title + p {
+    line-height: 1.8; /* Space between lines in paragraph */
+    margin-top: 10px; /* Optional extra spacing above paragraph */
+  }
+</style>
+
+<h4 id="info-title">Welcome to Sphereax</h4>
+<p>
+  Welcome to our integrated learning platform, an innovative digital environment designed to enrich understanding, strengthen skills, and inspire scientific curiosity. This space brings together three core learning pillars: the E-Library, a curated collection of essential references and academic materials; Solve & Practice, a dedicated area for guided exercises and purposeful skill-building; and the DigiLab, an immersive virtual space for interactive simulations and digital experimentation.
+  Thoughtfully crafted for both students and educators, this platform empowers meaningful, confident, and future-ready learning through accessible tools, high-quality content, and engaging digital experiences.
+</p>
+</p>
+        </div>
+
+       
+
+        <div id="randomDesc" class="sr-only">Opens a random section from the four cards.</div>
+
+        <div class="footer-note"></div>
+      </aside>
+
+    </div>
+  </main>
+
+  <script>
+    // Sphereax — client-side behavior
+    // Author: generated for user
+    // Purpose: enable keyboard + mouse navigation, download of HTML file, and a small "surprise me" function
+
+    (function(){
+      'use strict';
+
+      // Select core elements
+      const grid = document.getElementById('cardGrid');
+      const cards = Array.from(grid.querySelectorAll('.card'));
+      const randomBtn = document.getElementById('randomBtn');
+      const viewSource = document.getElementById('viewSource');
+      const downloadBtn = document.getElementById('downloadBtn');
+
+      // Basic link navigation: cards contain a data-target attribute with the destination URL
+      function openTarget(url){
+        // simple validation to avoid unexpected behavior
+        try{
+          const u = new URL(url);
+          window.location.href = u.href;
+        }catch(e){
+          // fallback: open in new tab if url is not absolute
+          window.open(url, '_blank', 'noopener');
+        }
+      }
+
+      // Attach click + key handlers
+      cards.forEach(card => {
+        // mouse click
+        card.addEventListener('click', (ev)=>{
+          ev.preventDefault();
+          const t = card.getAttribute('data-target');
+          if(t) openTarget(t);
+        });
+
+        // keyboard: Enter or Space should open link
+        card.addEventListener('keydown', (ev)=>{
+          if(ev.key === 'Enter' || ev.key === ' '){
+            ev.preventDefault();
+            const t = card.getAttribute('data-target');
+            if(t) openTarget(t);
+          }
+        });
+
+        // small tilt effect based on mouse position
+        card.addEventListener('mousemove', (e)=>{
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 .. 0.5
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          const rotY = x * 6; // degrees
+          const rotX = -y * 6;
+          card.style.transform = `perspective(900px) translateY(-8px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.01,1.01,1.01)`;
+        });
+
+        card.addEventListener('mouseleave', ()=>{
+          card.style.transform = '';
+        });
+
+      });
+
+      // Surprise Me: open a random card
+      function surprise(){
+        const idx = Math.floor(Math.random()*cards.length);
+        const t = cards[idx].getAttribute('data-target');
+        if(t) openTarget(t);
+      }
+
+      randomBtn.addEventListener('click', (e)=>{ e.preventDefault(); surprise(); });
+
+      // View Source opens a small in-page modal with highlighted source. For simplicity, we'll open a new tab with the current page's HTML.
+      viewSource.addEventListener('click', (e)=>{
+        e.preventDefault();
+        // create a blob from the HTML and open it
+        const html = document.documentElement.outerHTML;
+        const blob = new Blob([html], {type: 'text/html'});
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        setTimeout(()=> URL.revokeObjectURL(url), 60*1000);
+      });
+
+      // Download HTML — allow the user to download the current page as an HTML file
+      downloadBtn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const doc = '<!doctype html>\n' + document.documentElement.outerHTML;
+        const blob = new Blob([doc], {type:'text/html'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'sphereax-intro.html';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(()=> URL.revokeObjectURL(url), 60*1000);
+      });
+
+      // Accessibility: enable arrow-key navigation within the grid (Left/Right/Up/Down)
+      grid.addEventListener('keydown', (ev)=>{
+        const active = document.activeElement;
+        if(!active || !active.classList.contains('card')) return;
+        const idx = cards.indexOf(active);
+        if(idx === -1) return;
+        let nextIdx = idx;
+        switch(ev.key){
+          case 'ArrowRight': nextIdx = (idx % 2 === 0) ? idx+1 : idx; break;
+          case 'ArrowLeft': nextIdx = (idx % 2 === 1) ? idx-1 : idx; break;
+          case 'ArrowDown': nextIdx = Math.min(cards.length-1, idx+2); break;
+          case 'ArrowUp': nextIdx = Math.max(0, idx-2); break;
+          default: return; // ignore other keys
+        }
+        ev.preventDefault();
+        cards[nextIdx].focus();
+      });
+
+      // Small entrance animation sequence
+      function entrance(){
+        cards.forEach((c,i)=>{
+          c.style.opacity = 0;
+          c.style.transform = 'translateY(20px)';
+          setTimeout(()=>{
+            c.style.transition = 'opacity 480ms ease, transform 480ms cubic-bezier(.22,.9,.25,1)';
+            c.style.opacity = '';
+            c.style.transform = '';
+          }, 120 + i*80);
+        });
+      }
+      // Run entrance after short delay to allow CSS to settle
+      requestAnimationFrame(()=> setTimeout(entrance, 80));
+
+      // Ensure keyboard users see focus ring when tabbing
+      function handleFirstTab(e) {
+        if (e.key === 'Tab') {
+          document.body.classList.add('user-is-tabbing');
+          window.removeEventListener('keydown', handleFirstTab);
+        }
+      }
+      window.addEventListener('keydown', handleFirstTab);
+
+      // Expose a small debug API on window for advanced users
+      window.SPHEREX = window.SPHEREX || {};
+      window.SPHEREX.cards = cards;
+      window.SPHEREX.openTarget = openTarget;
+
+      // Sanity-check: warn if a card has a missing target
+      cards.forEach((c, i) => {
+        const t = c.getAttribute('data-target');
+        if(!t){
+          console.warn('Sphereax: card %d has no data-target', i+1);
+        }
+      });
+
+    })();
+  </script>
+
+  <!--
+    Notes:
+    - Replace data-target URLs on each .card element with your real links.
+    - This single-file HTML includes CSS and JS; it's safe to save as index.html and open in a browser.
+    - Accessible: keyboard focusable, ARIA attributes for landmarks and labels.
+  -->
+</body>
+</html>

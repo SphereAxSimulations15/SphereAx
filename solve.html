@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Boyle's Law & Charles' Law — Practice Problems</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#7c3aed;--muted:#94a3b8;--glass: rgba(255,255,255,0.03);}    
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial; margin:0; min-height:100vh; background:linear-gradient(180deg,#061226 0%, #07102a 60%); color:#e6eef8; display:flex; align-items:flex-start; justify-content:center; padding:36px}
+    .container{width:960px; max-width:96%;}
+    header{display:flex; align-items:center; gap:16px;margin-bottom:18px}
+    .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#4f46e5); display:flex;align-items:center;justify-content:center;font-weight:800;box-shadow:0 8px 30px rgba(79,70,229,0.18)}
+    h1{margin:0;font-size:20px}
+    p.lead{margin:4px 0 0;color:var(--muted);font-size:13px}
+
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .card{background:linear-gradient(180deg,var(--card), rgba(11,18,32,0.85));padding:18px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
+    .problem-title{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+    .problem-title strong{font-size:15px}
+    label{display:block;font-size:13px;margin-top:10px;color:var(--muted)}
+    input[type=number]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:inherit;font-size:14px}
+    .row{display:flex;gap:10px;margin-top:12px}
+    button{background:var(--accent);border:none;padding:10px 12px;border-radius:10px;color:white;font-weight:600;cursor:pointer}
+    button.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06)}
+    .result{margin-top:12px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);font-size:14px}
+    .small{font-size:12px;color:var(--muted)}
+    .steps{margin-top:8px;background:rgba(255,255,255,0.01);padding:10px;border-radius:8px;color:var(--muted);font-size:13px}
+    footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* responsive */
+    @media (max-width:780px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+    <a href="index.html" style="
+  position:fixed;
+  bottom:24px;
+  left:24px;
+  padding:10px 14px;
+  background:linear-gradient(135deg,#8af5e2,#7cb7ff);
+  color:#001b16;
+  text-decoration:none;
+  border-radius:10px;
+  font-weight:700;
+  box-shadow:0 4px 14px rgba(0,0,0,0.35);
+  z-index:99999;
+">
+← Back
+</a>
+
+  <div class="container">
+    <header>
+      <div class="logo">BL</div>
+      <div>
+        <h1>Boyle's Law & Charles' Law Interactive Practice</h1>
+        <p class="lead">Solve the problems, check your answer, and reveal step-by-step solutions. Perfect for classroom practice.</p>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- Boyle's Law Card -->
+      <section class="card" id="boyle-card">
+        <div class="problem-title"><strong>Boyle's Law (P₁V₁ = P₂V₂)</strong><span class="small">Temperature constant</span></div>
+        <p class="small">Problem: A gas occupies a volume of <strong>4.0 L</strong> at a pressure of <strong>200 kPa</strong>. If the gas is compressed to <strong>2.0 L</strong>, what is the new pressure?</p>
+
+        <label for="b_p1">P₁ (kPa)</label>
+        <input id="b_p1" type="number" step="any" value="200">
+        <label for="b_v1">V₁ (L)</label>
+        <input id="b_v1" type="number" step="any" value="4.0">
+        <label for="b_v2">V₂ (L)</label>
+        <input id="b_v2" type="number" step="any" value="2.0">
+
+        <div class="row">
+          <button id="b_check">Check Answer</button>
+          <button class="secondary" id="b_show">Show Steps</button>
+          <button class="secondary" id="b_reset">Reset</button>
+        </div>
+
+        <div id="b_result" class="result" aria-live="polite"></div>
+        <div id="b_steps" class="steps" style="display:none"></div>
+      </section>
+
+      <!-- Charles' Law Card -->
+      <section class="card" id="charles-card">
+        <div class="problem-title"><strong>Charles' Law (V₁/T₁ = V₂/T₂)</strong><span class="small">Pressure constant</span></div>
+        <p class="small">Problem: A gas has a volume of <strong>3.0 L</strong> at <strong>27°C</strong>. If heated to <strong>77°C</strong>, what is its new volume?</p>
+
+        <label for="c_v1">V₁ (L)</label>
+        <input id="c_v1" type="number" step="any" value="3.0">
+        <label for="c_t1">T₁ (°C)</label>
+        <input id="c_t1" type="number" step="any" value="27">
+        <label for="c_t2">T₂ (°C)</label>
+        <input id="c_t2" type="number" step="any" value="77">
+
+        <div class="row">
+          <button id="c_check">Check Answer</button>
+          <button class="secondary" id="c_show">Show Steps</button>
+          <button class="secondary" id="c_reset">Reset</button>
+        </div>
+
+        <div id="c_result" class="result" aria-live="polite"></div>
+        <div id="c_steps" class="steps" style="display:none"></div>
+      </section>
+    </div>
+
+    <footer>
+      Tip: Answers are checked with a small tolerance so students don't lose marks for rounding. Use the "Show Steps" button to reveal the solution method.
+    </footer>
+  </div>
+
+  <script>
+    // Utility: compare numbers with tolerance
+    function approxEqual(a,b,tol=1e-2){return Math.abs(a-b) <= Math.abs(tol*Math.max(1,Math.abs(b)))}
+
+    // Boyle's Law logic
+    const b_p1 = document.getElementById('b_p1');
+    const b_v1 = document.getElementById('b_v1');
+    const b_v2 = document.getElementById('b_v2');
+    const b_check = document.getElementById('b_check');
+    const b_show = document.getElementById('b_show');
+    const b_reset = document.getElementById('b_reset');
+    const b_result = document.getElementById('b_result');
+    const b_steps = document.getElementById('b_steps');
+
+    function solveBoyle(p1,v1,v2){
+      // P1*V1 = P2*V2 -> P2 = P1*V1/V2
+      return (p1 * v1) / v2;
+    }
+
+    b_check.addEventListener('click', ()=>{
+      const p1 = parseFloat(b_p1.value);
+      const v1 = parseFloat(b_v1.value);
+      const v2 = parseFloat(b_v2.value);
+      if(!isFinite(p1)||!isFinite(v1)||!isFinite(v2)){
+        b_result.textContent = 'Please enter valid numeric values.'; return;
+      }
+      const p2 = solveBoyle(p1,v1,v2);
+      // expected based on default: 400
+      b_result.innerHTML = `Calculated P₂ = ${p2.toFixed(3)} kPa`;
+      if(approxEqual(p2,400,1e-2)){
+        b_result.innerHTML += `<br>✅ Matches the worked example answer (400 kPa).`;
+      } else {
+        b_result.innerHTML += `<br>ℹ️ This is the student answer based on the inputs.`;
+      }
+    });
+
+    b_show.addEventListener('click', ()=>{
+      const p1 = parseFloat(b_p1.value);
+      const v1 = parseFloat(b_v1.value);
+      const v2 = parseFloat(b_v2.value);
+      if(!isFinite(p1)||!isFinite(v1)||!isFinite(v2)){
+        b_steps.style.display='block'; b_steps.textContent='Please enter valid numeric values to show steps.'; return;
+      }
+      const p2 = solveBoyle(p1,v1,v2);
+      b_steps.style.display='block';
+      b_steps.innerHTML = `Step 1: Write Boyle's Law: P₁V₁ = P₂V₂.<br>`+
+                          `Step 2: Solve for P₂: P₂ = (P₁ × V₁) / V₂.<br>`+
+                          `Step 3: Substitute numbers: P₂ = (${p1}) × (${v1}) ÷ (${v2}) = ${p2.toFixed(3)} kPa.`;
+    });
+
+    b_reset.addEventListener('click', ()=>{
+      b_p1.value='200'; b_v1.value='4.0'; b_v2.value='2.0'; b_result.textContent=''; b_steps.style.display='none'; b_steps.textContent='';
+    });
+
+    // Charles' Law logic
+    const c_v1 = document.getElementById('c_v1');
+    const c_t1 = document.getElementById('c_t1');
+    const c_t2 = document.getElementById('c_t2');
+    const c_check = document.getElementById('c_check');
+    const c_show = document.getElementById('c_show');
+    const c_reset = document.getElementById('c_reset');
+    const c_result = document.getElementById('c_result');
+    const c_steps = document.getElementById('c_steps');
+
+    function celsiusToKelvin(t){return t + 273}
+    function solveCharles(v1,t1c,t2c){
+      const T1 = celsiusToKelvin(t1c);
+      const T2 = celsiusToKelvin(t2c);
+      // V2 = V1 * T2/T1
+      return v1 * (T2 / T1);
+    }
+
+    c_check.addEventListener('click', ()=>{
+      const v1 = parseFloat(c_v1.value);
+      const t1 = parseFloat(c_t1.value);
+      const t2 = parseFloat(c_t2.value);
+      if(!isFinite(v1)||!isFinite(t1)||!isFinite(t2)){
+        c_result.textContent='Please enter valid numeric values.'; return;
+      }
+      const v2 = solveCharles(v1,t1,t2);
+      c_result.innerHTML = `Calculated V₂ = ${v2.toFixed(3)} L`;
+      if(approxEqual(v2,3.5,1e-2)){
+        c_result.innerHTML += `<br>✅ Matches the worked example answer (3.5 L).`;
+      } else {
+        c_result.innerHTML += `<br>ℹ️ This is the student answer based on the inputs.`;
+      }
+    });
+
+    c_show.addEventListener('click', ()=>{
+      const v1 = parseFloat(c_v1.value);
+      const t1 = parseFloat(c_t1.value);
+      const t2 = parseFloat(c_t2.value);
+      if(!isFinite(v1)||!isFinite(t1)||!isFinite(t2)){
+        c_steps.style.display='block'; c_steps.textContent='Please enter valid numeric values to show steps.'; return;
+      }
+      const T1 = celsiusToKelvin(t1);
+      const T2 = celsiusToKelvin(t2);
+      const v2 = solveCharles(v1,t1,t2);
+      c_steps.style.display='block';
+      c_steps.innerHTML = `Step 1: Convert °C → K: T₁ = ${t1} + 273 = ${T1} K; T₂ = ${t2} + 273 = ${T2} K.<br>`+
+                          `Step 2: Use Charles' Law: V₁ / T₁ = V₂ / T₂ → V₂ = V₁ × (T₂ / T₁).<br>`+
+                          `Step 3: Substitute numbers: V₂ = ${v1} × (${T2} ÷ ${T1}) = ${v2.toFixed(3)} L.`;
+    });
+
+    c_reset.addEventListener('click', ()=>{
+      c_v1.value='3.0'; c_t1.value='27'; c_t2.value='77'; c_result.textContent=''; c_steps.style.display='none'; c_steps.textContent='';
+    });
+  </script>
+</body>
+</html>
