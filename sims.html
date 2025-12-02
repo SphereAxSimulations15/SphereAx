@@ -169,6 +169,84 @@
     .controls-row{flex-direction:column; align-items:stretch}
     canvas{height:260px}
   }
+
+  /* =====================
+     MOBILE-SAFE OVERRIDES
+     (Only layout/CSS changes — no markup or logic edits)
+     ===================== */
+
+  /* Ensure flex/grid children can shrink to avoid overflow */
+  .container, .sim-card, .panel, .controls-row, .stats, .preset-row { min-width: 0; }
+
+  /* Prevent the inline width/min-width on the pressure-visual column from causing horizontal scroll.
+     The original markup intentionally used inline styles for widths — here we only override them on small screens. */
+  @media (max-width:860px) {
+    /* tighter container padding on narrow tablets/phones */
+    .container { padding-left:14px; padding-right:14px; gap:14px; }
+
+    /* make the two-column block inside sim-card flow naturally and allow the right block to be full-width */
+    .sim-card > div[style*="display:flex"][style*="gap:12px"] > div:last-child {
+      width: 100% !important;
+      min-width: 0 !important;
+      max-width: 100% !important;
+    }
+
+    .sim-card > div[style*="display:flex"][style*="gap:12px"] > div:first-child {
+      min-width: 0 !important;
+      flex: 1 1 auto !important;
+    }
+
+    /* ensure legend boxes wrap text and do not force overflow */
+    .sim-card .legend { word-break: break-word; white-space: normal; max-width: 100%; }
+
+    /* ensure canvas keeps a sane aspect ratio and doesn't force layout overflow */
+    .canvas-wrap { width: 100%; box-sizing: border-box; }
+    canvas { height: auto !important; aspect-ratio: 820 / 420; max-height: 420px; }
+
+    /* allow the stat boxes to wrap when space is tight */
+    .stats { flex-wrap: wrap; justify-content: flex-end; gap:8px; }
+  }
+
+  /* Extra small phones */
+  @media (max-width:420px) {
+    /* reduce back button footprint so it doesn't cover content */
+    .back { padding:8px 10px; bottom:12px; left:10px; border-radius:10px; font-size:13px; }
+
+    /* scale down header hint and title slightly */
+    .title { font-size:16px; }
+    .subtitle { font-size:12px; }
+
+    /* make canvas shorter for small screens to reduce vertical scroll and keep UI visible */
+    .canvas-wrap { padding:10px; }
+    canvas { height: 220px !important; max-height: 260px; aspect-ratio: 3 / 2; }
+
+    /* tighten spacing inside cards/panels */
+    .sim-card { padding:12px; }
+    .panel { padding:12px; }
+
+    /* controls stack tightly */
+    .left-controls { gap:6px; }
+    .btn { padding:8px 10px; font-size:13px; }
+    .preset-row .btn.secondary { padding:6px 8px; font-size:13px; }
+
+    /* reduce stat-box min width to avoid wrap pushing */
+    .stat-box { min-width:70px; padding:8px; font-size:13px; }
+    .stat-label { font-size:10px; }
+
+    /* ensure select for particle count doesn't overflow */
+    #particleCount { min-width: 0; max-width: 42%; }
+  }
+
+  /* Prevent any accidental horizontal overflow from inline-styled elements */
+  @media (max-width:600px) {
+    html, body { -webkit-overflow-scrolling: touch; overflow-x: hidden; }
+  }
+
+  /* Small refinement: ensure panel occupies full width when grid collapses */
+  @media (max-width:1024px) {
+    .panel { width: 100%; box-sizing: border-box; }
+  }
+
 </style>
 </head>
 <body>
