@@ -7,7 +7,7 @@
   <meta name="description" content="Interactive Gas Laws flipbook (Boyle's & Charles' Law) — sci-fi aesthetic, animations, printable." />
   <style>
     /* --------------------
-       Sci‑Fi aesthetic variables
+       Sci-Fi aesthetic variables
        -------------------- */
     :root{
       --bg:#071124; /* deep space */
@@ -21,45 +21,102 @@
       --radius:14px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
       --ui: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      --page-aspect: 1.4444444; /* 780 / 540 */
     }
 
+    /* Responsive base text sizing (fluid but conservative so visual theme is preserved) */
+    html { font-size: clamp(14px, 1.15vw + 12px, 16px); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
     /* Reset */
     *{box-sizing:border-box}
-    html,body{height:100%; margin:0; font-family:var(--ui); background:radial-gradient(1200px 600px at 10% 10%, rgba(107,140,255,0.06), transparent), linear-gradient(180deg,#050819 0%, var(--bg) 60%); color:#dbeaf6}
+    html,body{height:100%; margin:0; font-family:var(--ui); background:radial-gradient(1200px 600px at 10% 10%, rgba(107,140,255,0.06), transparent), linear-gradient(180deg,#050819 0%, var(--bg) 60%); color:#dbeaf6; -webkit-tap-highlight-color: transparent}
 
-    /* Layout */
-    .app{display:grid; grid-template-columns:360px 1fr; gap:28px; padding:32px; min-height:100vh; align-items:start}
+    /* Make sure animated stars sit behind all UI */
+    .stars{position:fixed; left:0; top:0; right:0; bottom:0; pointer-events:none; z-index:0}
+
+    /* App layout: fluid sidebar + flexible viewer */
+    .app{
+      display:grid;
+      grid-template-columns: clamp(260px, 20vw, 360px) 1fr;
+      gap: clamp(16px, 2.6vw, 28px);
+      padding: clamp(16px, 2.2vw, 32px);
+      min-height:100vh;
+      align-items:start;
+      position:relative;
+      z-index:1; /* above stars */
+    }
 
     /* Sidebar */
-    .sidebar{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid var(--glass-border); border-radius:18px; padding:18px; box-shadow:var(--glass-shadow)}
+    .sidebar{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid var(--glass-border);
+      border-radius:18px;
+      padding:18px;
+      box-shadow:var(--glass-shadow);
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      min-width:0;
+    }
     .brand{display:flex; gap:12px; align-items:center}
-    .logo{width:56px; height:56px; border-radius:12px; display:grid; place-items:center; background:linear-gradient(135deg,var(--accent), var(--accent-2)); box-shadow:0 6px 20px rgba(107,140,255,0.12); font-weight:700}
-    .brand h1{font-size:16px;margin:0}
-    .brand p{margin:0;font-size:12px;color:var(--muted)}
+    .logo{width:56px; height:56px; border-radius:12px; display:grid; place-items:center; background:linear-gradient(135deg,var(--accent), var(--accent-2)); box-shadow:0 6px 20px rgba(107,140,255,0.12); font-weight:700; flex:0 0 auto}
+    .brand h1{font-size:1rem;margin:0}
+    .brand p{margin:0;font-size:0.8125rem;color:var(--muted)}
 
-    .controls{margin-top:18px; display:flex; flex-direction:column; gap:12px}
-    .btn{background:transparent; border:1px solid rgba(255,255,255,0.06); padding:10px 12px; border-radius:10px; cursor:pointer; color:inherit; backdrop-filter: blur(6px); transition:all .22s}
+    .controls{margin-top:8px; display:flex; flex-direction:column; gap:12px}
+    .btn{background:transparent; border:1px solid rgba(255,255,255,0.06); padding:10px 12px; border-radius:10px; cursor:pointer; color:inherit; backdrop-filter: blur(6px); transition:all .22s; min-height:40px; display:inline-flex; align-items:center; justify-content:center; gap:8px}
     .btn:hover{transform:translateY(-3px); box-shadow:0 8px 30px rgba(59,111,226,0.08)}
     .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#021022; border:none; font-weight:600}
 
-    .pages-list{margin-top:14px; height:360px; overflow:auto; padding:8px; display:flex; flex-direction:column; gap:8px}
-    .page-item{display:flex; gap:10px; align-items:center; padding:10px; border-radius:10px; cursor:pointer; border:1px solid transparent}
+    .pages-list{margin-top:8px; height:clamp(180px, 40vh, 360px); overflow:auto; padding:8px; display:flex; flex-direction:column; gap:8px; min-height:0}
+    .page-item{display:flex; gap:10px; align-items:center; padding:10px; border-radius:10px; cursor:pointer; border:1px solid transparent; background:transparent; text-align:left}
     .page-item:hover{background:rgba(255,255,255,0.02); border-color:rgba(255,255,255,0.03)}
     .page-item.active{background:linear-gradient(90deg, rgba(62,231,198,0.06), rgba(107,140,255,0.04)); border:1px solid rgba(62,231,198,0.12)}
     .page-index{width:36px; height:36px; border-radius:8px; display:grid; place-items:center; background:rgba(0,0,0,0.3); font-family:var(--mono); color:var(--accent)}
 
-    .meta{margin-top:12px; font-size:13px; color:var(--muted)}
+    .meta{margin-top:6px; font-size:0.8125rem; color:var(--muted)}
 
     /* Main viewer */
-    .viewer{display:flex; flex-direction:column; gap:16px}
-    .viewer-top{display:flex; justify-content:space-between; gap:12px}
+    .viewer{display:flex; flex-direction:column; gap:16px; min-width:0}
+
+    .viewer-top{display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap}
+    .viewer-top > .card{flex:1; min-width:0}
 
     .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid var(--glass-border); border-radius:18px; padding:18px; box-shadow:var(--glass-shadow)}
 
-    .flipbook{height:640px; position:relative; overflow:hidden; display:grid; place-items:center}
-    .page{position:absolute; width:780px; max-width:calc(100% - 120px); height:540px; border-radius:16px; padding:28px; background:linear-gradient(135deg, rgba(255,255,255,0.017), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); transform-origin:left center; box-shadow:0 30px 80px rgba(2,6,12,0.6); backdrop-filter: blur(6px); display:flex; flex-direction:column; gap:12px}
+    /* Flipbook container: adaptive height */
+    .flipbook{
+      height: min(78vh, 720px);
+      width:100%;
+      position:relative;
+      overflow:visible; /* allow card shadows and transforms */
+      display:grid;
+      place-items:center;
+      padding:12px;
+    }
 
-    /* page layering and animation */
+    /* Page sizing: keep aspect ratio, fluid width */
+    .page{
+      position:absolute;
+      width: clamp(300px, 66vw, 780px);
+      max-width: calc(100% - 48px);
+      aspect-ratio: 780 / 540; /* preserve original proportion */
+      border-radius:16px;
+      padding:28px;
+      background:linear-gradient(135deg, rgba(255,255,255,0.017), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.04);
+      transform-origin:left center;
+      box-shadow:0 30px 80px rgba(2,6,12,0.6);
+      backdrop-filter: blur(6px);
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      left:0; right:0; margin-left:auto; margin-right:auto; /* center within flipbook */
+      will-change: transform, opacity;
+      overflow:visible;
+      padding-bottom:20px;
+    }
+
+    /* page layering and animation states (unchanged logic) */
     .page[data-state="hidden"]{opacity:0; transform:translateX(40px) scale(0.98); pointer-events:none}
     .page[data-state="current"]{z-index:30; transform:translateX(0) scale(1); opacity:1}
     .page[data-state="next"]{z-index:10; transform:translateX(80px) scale(0.96); opacity:0.92}
@@ -79,11 +136,11 @@
     }
 
     /* header inside page */
-    .page h2{margin:0; font-size:20px; letter-spacing:0.2px}
-    .page .subtitle{color:var(--muted); font-size:13px}
+    .page h2{margin:0; font-size:1.25rem; letter-spacing:0.2px}
+    .page .subtitle{color:var(--muted); font-size:0.8125rem}
 
-    /* content area */
-    .content{overflow:auto; padding-right:8px; font-size:15px; line-height:1.5}
+    /* content area: make flexible and scrollable inside page */
+    .content{overflow:auto; padding-right:8px; font-size:0.9375rem; line-height:1.5; flex:1; min-height:0}
     .content ul{margin:8px 0 8px 18px}
     .content table{width:100%; border-collapse:collapse}
     .content table th, .content table td{padding:8px; text-align:left}
@@ -92,36 +149,60 @@
     .glow-accent{color:var(--accent); text-shadow:0 6px 30px rgba(62,231,198,0.14)}
 
     /* footer controls */
-    .controls-row{display:flex; gap:10px; align-items:center}
-    .small{font-size:13px; color:var(--muted)}
+    .controls-row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .small{font-size:0.875rem; color:var(--muted)}
     .progress{height:10px; background:rgba(255,255,255,0.03); border-radius:10px; overflow:hidden; width:220px}
     .progress > i{display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-2)); width:0%}
 
     /* keyboard hint */
-    .hint{font-size:12px; color:var(--muted)}
+    .hint{font-size:0.8125rem; color:var(--muted)}
 
-    /* responsive */
+    /* touch targets and accessibility adjustments for small screens */
     @media (max-width:980px){
-      .app{grid-template-columns:1fr; padding:18px}
-      .sidebar{order:2}
+      .app{grid-template-columns:1fr; padding:16px}
+      .sidebar{order:2; width:100%}
       .viewer{order:1}
-      .flipbook{height:540px}
+      .flipbook{height: min(66vh, 640px); padding:8px}
+      .btn{padding:12px 14px; min-height:48px}
+      .page{transform-origin:center center; width: min(92vw, 760px); max-width: calc(100% - 32px); aspect-ratio: 780 / 540;}
+      .pages-list{height: clamp(140px, 30vh, 300px)}
+      .viewer-top{align-items:stretch}
     }
 
-    /* print styles */
+    /* very large screens: keep layout centered and constrained */
+    @media (min-width:1600px){
+      .app{padding:40px 80px; gap:40px}
+      .flipbook{height: min(78vh, 840px)}
+      .page{width: clamp(420px, 48vw, 980px); aspect-ratio: 780 / 540}
+    }
+
+    /* print styles (kept behavior, adjusted to ensure good print) */
     @media print{
       body{background:white; color:black}
       .sidebar, .controls-row, .btn{display:none}
-      .page{position:static; box-shadow:none; border:none; transform:none; width:100%; height:auto}
+      .page{position:static; box-shadow:none; border:none; transform:none; width:100%; height:auto; page-break-inside:avoid;}
+      .flipbook{box-shadow:none}
     }
 
-    /* subtle animated background stars */
-    .stars{position:fixed; left:0; top:0; right:0; bottom:0; pointer-events:none; z-index:0}
+    /* subtle animated background stars (unchanged visual) */
     .stars:after{content:''; position:absolute; width:2px; height:2px; box-shadow:
       40px 60px #123456, 80px 120px #234567, 200px 90px #345678, 580px 250px #56789a, 420px 20px #89abcd,
       700px 400px #cdefff, 920px 120px #89abcd, 100px 500px #67bcd9, 300px 300px #68d0be;
       animation:twinkle 6s linear infinite; opacity:0.6}
     @keyframes twinkle{50%{opacity:0.2} 100%{opacity:0.6}}
+
+    /* Accessibility: visible focus ring only when keyboard used */
+    body.keyboard :focus{outline:2px solid rgba(107,140,255,0.24); outline-offset:3px; border-radius:6px}
+
+    /* Make sure floating Back button doesn't overlap vital UI on small screens */
+    #backToIndex{
+      /* keep visual styling but ensure it's above other content */
+      z-index:9999;
+    }
+    @media (max-width:420px){
+      #backToIndex{ left:12px; bottom:12px; padding:10px 12px; font-size:13px }
+    }
+
   </style>
 </head>
 <body>
@@ -529,8 +610,8 @@ V₂ = 2.0 × 350 / 300 = 2.33 L</pre>
     document.addEventListener('click', (e) => {
       // close any potential future popups
     });
-    
-    
+
+
   </script>
 </body>
 </html>
@@ -575,5 +656,3 @@ document.getElementById("backToIndex").onclick = () => {
   window.location.href = "index.html";
 };
 </script>
-
-
